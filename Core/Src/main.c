@@ -93,7 +93,7 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC_Init();
   /* USER CODE BEGIN 2 */
-
+	HAL_ADC_Start_IT(&hadc);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,15 +101,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		HAL_ADC_Start(&hadc);
-		HAL_ADC_PollForConversion(&hadc, 100); //waiting for conversion of signal 100 ms
-		result = HAL_ADC_GetValue(&hadc);
-		
-		if(result >= 2000){
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
-		} else{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-		}
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
