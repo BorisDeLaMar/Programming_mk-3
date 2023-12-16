@@ -217,6 +217,7 @@ void EXTI0_IRQHandler(void)
   */
 void TIM2_IRQHandler(void)
 {
+	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */

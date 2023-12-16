@@ -87,6 +87,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+	HAL_TIM_Base_Start_IT(&htim2); //turning on the timer in IT mode
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
