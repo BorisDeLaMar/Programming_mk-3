@@ -39,6 +39,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc;
+
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
@@ -49,6 +51,7 @@ TIM_HandleTypeDef htim2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -62,6 +65,7 @@ static void MX_TIM2_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
+uint16_t result = 0;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -87,7 +91,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
-	HAL_TIM_Base_Start_IT(&htim2); //turning on the timer in IT mode
+  MX_ADC_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -97,7 +101,15 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+		HAL_ADC_Start(&hadc);
+		HAL_ADC_PollForConversion(&hadc, 100); //waiting for conversion of signal 100 ms
+		result = HAL_ADC_GetValue(&hadc);
+		
+		if(result >= 2000){
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+		} else{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+		}
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -141,6 +153,61 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC_Init(void)
+{
+
+  /* USER CODE BEGIN ADC_Init 0 */
+
+  /* USER CODE END ADC_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC_Init 1 */
+
+  /* USER CODE END ADC_Init 1 */
+
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc.Instance = ADC1;
+  hadc.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
+  hadc.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+  hadc.Init.LowPowerAutoWait = ADC_AUTOWAIT_DISABLE;
+  hadc.Init.LowPowerAutoPowerOff = ADC_AUTOPOWEROFF_DISABLE;
+  hadc.Init.ChannelsBank = ADC_CHANNELS_BANK_A;
+  hadc.Init.ContinuousConvMode = DISABLE;
+  hadc.Init.NbrOfConversion = 1;
+  hadc.Init.DiscontinuousConvMode = DISABLE;
+  hadc.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc.Init.DMAContinuousRequests = DISABLE;
+  if (HAL_ADC_Init(&hadc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_1;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_4CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC_Init 2 */
+
+  /* USER CODE END ADC_Init 2 */
+
 }
 
 /**

@@ -201,17 +201,8 @@ void SysTick_Handler(void)
 /**
   * @brief This function handles EXTI line0 interrupt.
   */
-uint8_t flag = 1;
 void EXTI0_IRQHandler(void)
 {
-	if(flag == 1){
-		HAL_TIM_Base_Stop_IT(&htim2);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-		flag = 0;
-	} else{
-		HAL_TIM_Base_Start_IT(&htim2);
-		flag = 1;
-	}
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
   /* USER CODE END EXTI0_IRQn 0 */
@@ -226,7 +217,6 @@ void EXTI0_IRQHandler(void)
   */
 void TIM2_IRQHandler(void)
 {
-	HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_7);
   /* USER CODE BEGIN TIM2_IRQn 0 */
 
   /* USER CODE END TIM2_IRQn 0 */
